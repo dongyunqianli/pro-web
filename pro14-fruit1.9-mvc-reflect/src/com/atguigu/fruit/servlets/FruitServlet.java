@@ -25,27 +25,24 @@ public class FruitServlet extends ViewBaseServlet {
 
     @Override
     protected void service(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-
-        request.setCharacterEncoding("UTF-8");
+        request.setCharacterEncoding("utf-8");
 
         String operate=request.getParameter("operate");
         if(StringUtil.isEmpty(operate)){
             operate="index";
         }
-
-
-        //获取当前类中所有的方法
+        //获取当前类中的所有方法
         Method[] methods = this.getClass().getDeclaredMethods();
         for(Method m:methods){
-            //获取方法名称
+            //获取方法的名称
             String methodName=m.getName();
             if(operate.equals(methodName)){
+
+
                 try {
                     //找到和operate同名的方法，那么通过反射技术调用它
                     m.invoke(this,request,response);
-
-                    return ;
-
+                    return;
                 } catch (IllegalAccessException e) {
                     e.printStackTrace();
                 } catch (InvocationTargetException e) {
@@ -53,10 +50,7 @@ public class FruitServlet extends ViewBaseServlet {
                 }
             }
         }
-        throw new RuntimeException("operate值非法");
-
-
-
+        throw new RuntimeException("operate 值非法");
     }
 
 

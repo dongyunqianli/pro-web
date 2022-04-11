@@ -1,4 +1,4 @@
-package com.atguigu.fruit.servlets;
+package com.atguigu.fruit.controllers;
 
 import com.atguigu.fruit.dao.FruitDAO;
 import com.atguigu.fruit.dao.impl.FruitDAOImpl;
@@ -6,59 +6,33 @@ import com.atguigu.fruit.pojo.Fruit;
 import com.atguigu.myssm.myspringmvc.ViewBaseServlet;
 import com.atguigu.myssm.util.StringUtil;
 
+import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
-import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.util.List;
 
 
-@WebServlet("/fruit.do")
-public class FruitServlet extends ViewBaseServlet {
-
-    private FruitDAO fruitDAO=new FruitDAOImpl();
+public class FruitController extends ViewBaseServlet {
 
 
-    @Override
-    protected void service(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-
-        request.setCharacterEncoding("UTF-8");
-
-        String operate=request.getParameter("operate");
-        if(StringUtil.isEmpty(operate)){
-            operate="index";
-        }
-
-
-        //获取当前类中所有的方法
-        Method[] methods = this.getClass().getDeclaredMethods();
-        for(Method m:methods){
-            //获取方法名称
-            String methodName=m.getName();
-            if(operate.equals(methodName)){
-                try {
-                    //找到和operate同名的方法，那么通过反射技术调用它
-                    m.invoke(this,request,response);
-
-                    return ;
-
-                } catch (IllegalAccessException e) {
-                    e.printStackTrace();
-                } catch (InvocationTargetException e) {
-                    e.printStackTrace();
-                }
-            }
-        }
-        throw new RuntimeException("operate值非法");
+    //之前FruitServlet是一个Servlet组件，那么其中的 init方法 一定会被调用
+    //之前 init方法内部 会出现一句话： super.init() ;
 
 
 
+
+    private ServletContext servletContext;
+
+
+    public void setServletContext(ServletContext servletContext) throws ServletException {
+        this.servletContext = servletContext;
+        super.init(servletContext);
     }
 
+    private FruitDAO fruitDAO=new FruitDAOImpl();
 
 
     private void update(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
